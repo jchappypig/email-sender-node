@@ -45,7 +45,7 @@ const send = async (from, to, cc, bcc, subject, content) => {
 
   const data = {
     personalizations,
-    from: mapToEmails(from)[0],
+    from: from && mapToEmails(from)[0],
     subject,
     content: [mapToContent(content)]
   }

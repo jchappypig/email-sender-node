@@ -133,6 +133,27 @@ describe('sendgrid', () => {
       });
     });
 
+    it('sends nothing to sendgrid api if params are not provided', () => {
+      const postFnMock = jest.fn().mockReturnValue({ status: 400, data: { errors: 'Invalid data' } });
+      axios.post = postFnMock;
+
+      sendgrid.send();
+
+      expect(postFnMock.mock.calls[0][1]).toEqual({
+        personalizations: [{
+          to: undefined,
+          cc: undefined,
+          bcc: undefined
+        }],
+        from: undefined,
+        subject: undefined,
+        content: [{
+          type: 'text/plain',
+          value: undefined
+        }]
+      });
+    });
+
     it('configs api key', () => {
       const postFnMock = jest.fn().mockReturnValue({ status: 202, data: {} });
       axios.post = postFnMock;
