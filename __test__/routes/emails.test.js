@@ -2,7 +2,7 @@ const request = require('supertest');
 const app = require('../../app');
 const emailService = require('../../services/emailService');
 
-describe('email', () => {
+describe('routes/emails', () => {
   describe('GET /emails', () => {
     it('reponses 200', async () => {
       const response = await request(app).get('/emails');
@@ -19,10 +19,9 @@ describe('email', () => {
       'subject': 'Hi',
       'content': 'How is your weekend?'
     };
+    const sendSpy = jest.spyOn(emailService, 'send');
 
     it('uses email service to send email', async () => {
-      const sendSpy = jest.spyOn(emailService, 'send');
-
       await request(app).post('/emails')
         .send(data);
 
