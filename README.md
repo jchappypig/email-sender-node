@@ -54,3 +54,6 @@ __test__            # Unit tests
 
 - Integrate with mailgun api
 - Rails version
+
+
+Feedback is always welcome 🤗
