@@ -58,7 +58,7 @@ const send = async (from, to, cc, bcc, subject, content) => {
 
   try {
     const response = await axios.post(apiUrl, data, axiosConfig);
-    return { statusCode: response.status, response: response.data }
+    return { statusCode: response.status, response: 'Email sent successfully!\n' }
     return response;
   } catch (error) {
     const { response } = error;

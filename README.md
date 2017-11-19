@@ -19,6 +19,12 @@ Server will be started at [http://localhost:3000](http://localhost:3000)
 
 NOTE: You need to config the `SENDGRID_API_KEY` in `.env` file
 
+Once you setup, try this 👇:
+
+```
+curl --request POST --url 'http://localhost:3000/emails' --data "from='jchappypig@hotmail.com&to='jchappypig@hotmail.com,jchappypig@gmail.com'&subject='Hi'&content='How is your weekend?'"
+```
+
 ## How to run the tests
 
 ```
