@@ -4,8 +4,14 @@ const mailgun = require('../../providers/mailgun');
 
 describe('emailService', () => {
   describe('send', () => {
+    const sendgridResponse = {
+      statusCode: 200,
+      response: { message: 'sendgrid message' }
+    };
+
     it('sends email through sendgridProvider', () => {
-      const sendgridSendSpy = jest.spyOn(sendgrid, 'send').mockReturnValue({ statusCode: 200 });
+      const sendgridSendFnMock = jest.fn().mockReturnValue(sendgridResponse);
+      sendgrid.send = sendgridSendFnMock;
 
       emailService.send(
         'jchappypig@hotmail.com',
@@ -16,7 +22,7 @@ describe('emailService', () => {
         'How is your weekend?'
       );
 
-      expect(sendgridSendSpy).toHaveBeenCalledWith(
+      expect(sendgridSendFnMock).toHaveBeenCalledWith(
         'jchappypig@hotmail.com',
         'stefano.fratini@siteminder.com',
         'kent.cameron@siteminder.com',
@@ -28,33 +34,36 @@ describe('emailService', () => {
 
     [400, 200, 202].forEach(statusCode => {
       describe(`when sendgrid returns ${statusCode}`, () => {
-        const sendgripResponse = {
+        const sendgridResponse = {
           statusCode: statusCode,
           response: { message: 'abc message' }
         };
 
-        it('returns sendgrids response', () => {
-          const sendgridSendSpy = jest.spyOn(sendgrid, 'send').mockReturnValue(sendgripResponse);
+        it('returns sendgrids response', async () => {
+          const sendgridSendFnMock = jest.fn().mockReturnValue(sendgridResponse);
+          sendgrid.send = sendgridSendFnMock;
 
-          const response = emailService.send('jchappypig@hotmail.com');
+          const response = await emailService.send('jchappypig@hotmail.com');
 
-          expect(response).toEqual(sendgripResponse);
+          expect(response).toEqual(sendgridResponse);
         });
 
-        it('does not send email through mailgun', () => {
-          const sendgridSendSpy = jest.spyOn(sendgrid, 'send').mockReturnValue(sendgripResponse);
-          const mailgunSendSpy = jest.spyOn(mailgun, 'send');
+        it('does not send email through mailgun', async () => {
+          const sendgridSendFnMock = jest.fn().mockReturnValue(sendgridResponse);
+          sendgrid.send = sendgridSendFnMock;
+          const mailgunSendFnMock = jest.fn();
+          mailgun.send = mailgunSendFnMock;
 
-          const response = emailService.send('jchappypig@hotmail.com');
+          const response = await emailService.send('jchappypig@hotmail.com');
 
-          expect(mailgunSendSpy).not.toHaveBeenCalled();
+          expect(mailgunSendFnMock).not.toHaveBeenCalled();
         })
       });
     });
 
     [429, 401, 500].forEach(statusCode => {
       describe(`when sendgrid returns ${statusCode}`, () => {
-        const sendgripResponse = {
+        const sendgridResponse = {
           statusCode: statusCode,
           response: { message: 'sendgrid message' }
         };
@@ -64,24 +73,32 @@ describe('emailService', () => {
           response: { message: 'mailgun message' }
         };
 
-        it('fallbacks to mailgun provider', () => {
-          const sendgridSendSpy = jest.spyOn(sendgrid, 'send').mockReturnValue(sendgripResponse);
-          const mailgunSendSpy = jest.spyOn(mailgun, 'send').mockReturnValue(mailgunResponse);
+        it('fallbacks to mailgun provider', async () => {
+          const sendgridSendFnMock = jest.fn().mockReturnValue(sendgridResponse);
+          sendgrid.send = sendgridSendFnMock;
+          const mailgunSendFnMock = jest.fn().mockReturnValue(mailgunResponse);
+          mailgun.send = mailgunSendFnMock;
 
-          const response = emailService.send('jchappypig@hotmail.com');
+          const response = await emailService.send('jchappypig@hotmail.com');
 
-          expect(mailgunSendSpy).toHaveBeenCalled();
+          expect(mailgunSendFnMock).toHaveBeenCalled();
         });
 
-        it('returns mailgun response', () => {
-          const sendgridSendSpy = jest.spyOn(sendgrid, 'send').mockReturnValue(sendgripResponse);
-          const mailgunSendSpy = jest.spyOn(mailgun, 'send').mockReturnValue(mailgunResponse);
+        it('returns mailgun response', async () => {
+          const sendgridSendFnMock = jest.fn().mockReturnValue(sendgridResponse);
+          sendgrid.send = sendgridSendFnMock;
+          const mailgunSendFnMock = jest.fn().mockReturnValue(mailgunResponse);
+          mailgun.send = mailgunSendFnMock;
 
-          const response = emailService.send('jchappypig@hotmail.com');
+          const response = await emailService.send('jchappypig@hotmail.com');
 
           expect(response).toEqual(mailgunResponse);
         });
       });
     });
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
   });
 });

@@ -19,13 +19,15 @@ describe('routes/emails', () => {
       'subject': 'Hi',
       'content': 'How is your weekend?'
     };
-    const sendSpy = jest.spyOn(emailService, 'send');
 
     it('uses email service to send email', async () => {
+      const sendFnMock = jest.fn();
+      emailService.send = sendFnMock;
+
       await request(app).post('/emails')
         .send(data);
 
-      expect(sendSpy).toHaveBeenCalledWith(
+      expect(sendFnMock).toHaveBeenCalledWith(
         'jchappypig@hotmail.com',
         'stefano.fratini@siteminder.com',
         'kent.cameron@siteminder.com',
@@ -37,7 +39,8 @@ describe('routes/emails', () => {
 
     [200, 400, 500].forEach((statusCode) => {
       it(`responses ${statusCode} which the same as email service`, async () => {
-        const sendSpy = jest.spyOn(emailService, 'send').mockReturnValue({ statusCode });
+        const sendFnMock = jest.fn().mockReturnValue({ statusCode });
+        emailService.send = sendFnMock;
 
         const response = await request(app).post('/emails')
           .send(data);
@@ -46,9 +49,18 @@ describe('routes/emails', () => {
       });
     });
 
+    it('handles error when fail to send email', async () => {
+      const sendFnMock = jest.fn().mockImplementation(() => { throw new Error() });
+      emailService.send = sendFnMock;
+
+      const response = await request(app).post('/emails')
+      .send(data);
+
+      expect(response.statusCode).toBe(500);
+    });
+
     afterEach(() => {
       jest.resetAllMocks();
-      jest.restoreAllMocks();
     });
   });
 });
