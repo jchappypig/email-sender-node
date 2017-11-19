@@ -9,9 +9,9 @@ router.get('/', (req, res, next) => {
 router.post('/', (req, res, next) => {
   const { from, to, cc, bcc, subject, content } = req.body;
 
-  emailService.send(from, to, cc, bcc, subject, content);
+  const emailServiceRes = emailService.send(from, to, cc, bcc, subject, content);
 
-  res.send('Email is sent successfully');
+  res.status(emailServiceRes.statusCode).send('Email is sent successfully');
 });
 
 module.exports = router;

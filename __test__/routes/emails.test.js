@@ -11,43 +11,45 @@ describe('email', () => {
   });
 
   describe('POST /emails', () => {
-    describe('when input is valid', async () => {
-      const data = {
-        'from': 'jchappypig@hotmail.com',
-        'to': 'stefano.fratini@siteminder.com',
-        'cc': 'kent.cameron@siteminder.com',
-        'bcc': 'jchappypig@gmail.com',
-        'subject': 'Hi',
-        'content': 'How is your weekend?'
-      };
+    const data = {
+      'from': 'jchappypig@hotmail.com',
+      'to': 'stefano.fratini@siteminder.com',
+      'cc': 'kent.cameron@siteminder.com',
+      'bcc': 'jchappypig@gmail.com',
+      'subject': 'Hi',
+      'content': 'How is your weekend?'
+    };
 
-      it('resposne 201', async () => {
+    it('uses email service to send email', async () => {
+      const sendSpy = jest.spyOn(emailService, 'send');
+
+      await request(app).post('/emails')
+        .send(data);
+
+      expect(sendSpy).toHaveBeenCalledWith(
+        'jchappypig@hotmail.com',
+        'stefano.fratini@siteminder.com',
+        'kent.cameron@siteminder.com',
+        'jchappypig@gmail.com',
+        'Hi',
+        'How is your weekend?'
+      );
+    });
+
+    [200, 400, 500].forEach((statusCode) => {
+      it(`responses ${statusCode} which the same as email service`, async () => {
+        const sendSpy = jest.spyOn(emailService, 'send').mockReturnValue({ statusCode });
+
         const response = await request(app).post('/emails')
           .send(data);
 
-        expect(response.statusCode).toBe(200);
+        expect(response.statusCode).toBe(statusCode);
       });
+    });
 
-      it('uses email service to send email', async () => {
-        const sendSpy = jest.spyOn(emailService, 'send');
-
-        await request(app).post('/emails')
-          .send(data);
-
-        expect(sendSpy).toHaveBeenCalledWith(
-          'jchappypig@hotmail.com',
-          'stefano.fratini@siteminder.com',
-          'kent.cameron@siteminder.com',
-          'jchappypig@gmail.com',
-          'Hi',
-          'How is your weekend?'
-        );
-      });
-
-      afterEach(() => {
-        jest.resetAllMocks();
-        jest.restoreAllMocks();
-      });
+    afterEach(() => {
+      jest.resetAllMocks();
+      jest.restoreAllMocks();
     });
   });
 });
