@@ -27,6 +27,9 @@ npm test
 ## App structure
 I have created this app using express generator to begin with.
 
+**emails.js** (*talks to*)-> **emailService.js** (*talks to*) -> either **providers/sendgrid.js** or **providers/mailgun.js**
+
+
 ```
 providers
   sendgrid.js       # Massage user input to match sendgrid format; send email through sendgrid API.
