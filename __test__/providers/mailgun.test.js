@@ -36,13 +36,31 @@ describe('mailgun', () => {
       );
 
       expect(postFnMock.mock.calls[0][1]).toEqual(Querystring.stringify({
-        from:  'jchappypig@hotmail.com',
+        from: 'jchappypig@hotmail.com',
         to: 'stefano.fratini@siteminder.com',
         cc: 'kent.cameron@siteminder.com',
         bcc: 'jchappypig@gmail.com',
         subject: 'Hi',
         text: 'How is your weekend?'
       }));
+    });
+
+    describe('when success', async () => {
+      it('returns mailgun response', async () => {
+        const postFnMock = jest.fn().mockReturnValue({ status: 202, data: {} });
+        axios.post = postFnMock;
+
+        const response = await mailgun.send(
+          'jchappypig@hotmail.com',
+          'stefano.fratini@siteminder.com',
+          'kent.cameron@siteminder.com',
+          'jchappypig@gmail.com',
+          'Hi',
+          'How is your weekend?'
+        );
+
+        expect(response).toEqual({ statusCode: 202, response: 'Email sent successfully!\n' });
+      });
     });
   });
 });

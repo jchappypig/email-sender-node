@@ -54,7 +54,7 @@ describe('routes/emails', () => {
       emailService.send = sendFnMock;
 
       const response = await request(app).post('/emails')
-      .send(data);
+        .send(data);
 
       expect(response.statusCode).toBe(500);
     });
