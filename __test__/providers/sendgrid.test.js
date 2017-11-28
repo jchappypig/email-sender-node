@@ -228,7 +228,8 @@ describe('sendgrid', () => {
 
       expect(postFnMock.mock.calls[0][2]).toEqual({
         headers: {
-          'Authorization': `Bearer ${sendgrid.sendgridApiKey}`
+          'Authorization': `Bearer ${sendgrid.sendgridApiKey}`,
+          'Content-Type': 'application/json'
         }
       });
     });

@@ -1,6 +1,7 @@
 
 const axios = require('axios');
 const mailgun = require('../../providers/mailgun');
+const Querystring = require('querystring');
 
 describe('mailgun', () => {
   describe('send', () => {
@@ -34,14 +35,14 @@ describe('mailgun', () => {
         'How is your weekend?'
       );
 
-      expect(postFnMock.mock.calls[0][1]).toEqual({
+      expect(postFnMock.mock.calls[0][1]).toEqual(Querystring.stringify({
         from:  'jchappypig@hotmail.com',
         to: 'stefano.fratini@siteminder.com',
         cc: 'kent.cameron@siteminder.com',
         bcc: 'jchappypig@gmail.com',
         subject: 'Hi',
         text: 'How is your weekend?'
-      });
+      }));
     });
   });
 });

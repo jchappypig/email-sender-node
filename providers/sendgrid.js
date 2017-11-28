@@ -61,7 +61,8 @@ const send = async (from, to, cc, bcc, subject, content) => {
 
   const axiosConfig = {
     headers: {
-      'Authorization': `Bearer ${sendgridApiKey}`
+      'Authorization': `Bearer ${sendgridApiKey}`,
+      'Content-Type': 'application/json'
     }
   }
 
