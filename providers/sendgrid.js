@@ -4,7 +4,7 @@ const sendgridApiKey = `${process.env.SENDGRID_API_KEY}`;
 const emailWithNameRegex = /(.+)?<(.+)>$/;
 
 const mapToEmails = (input) => {
-  if (!input || !input.trim().length) return;
+  if (input === undefined) return;
 
   const emails = input
     .split(',')
@@ -16,7 +16,8 @@ const mapToEmails = (input) => {
 }
 
 const mapToContent = (input) => {
-  if (!input || !input.length) return;
+  if (input === undefined) return;
+
   return [{
     type: 'text/plain',
     value: input

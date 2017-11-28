@@ -5,12 +5,14 @@ describe('sendgrid', () => {
   describe('mapToEmails', () => {
     const { mapToEmails } = sendgrid;
 
-    it('returns undefined if input is empty', () => {
-      expect(mapToEmails('')).toBeUndefined();
+    it('returns empty email if input is empty', () => {
+      expect(mapToEmails('')).toEqual([]);
     });
 
-    it('returns undefined if input is empty spaces', () => {
-      expect(mapToEmails('  ')).toBeUndefined();
+    it('returns empty email if input is empty spaces', () => {
+      expect(mapToEmails('  ')).toEqual([
+        { email: '' }
+      ]);
     });
 
     it('returns undefined if input is undefined', () => {
@@ -97,8 +99,8 @@ describe('sendgrid', () => {
     });
 
     describe('when from is empty spaces', () => {
-      it('returns undefined', () => {
-        expect(mapToFrom('  ')).toBeUndefined();
+      it('returns empty email', () => {
+        expect(mapToFrom('   ')).toEqual({ email: '' });
       });
     });
 
@@ -114,9 +116,18 @@ describe('sendgrid', () => {
   describe('mapToContent', () => {
     const { mapToContent } = sendgrid;
 
-    describe('when content is empty', () => {
+    describe('when content is undefined', () => {
       it('returns undefined', () => {
-        expect(mapToContent('')).toBeUndefined();
+        expect(mapToContent()).toBeUndefined();
+      });
+    });
+
+    describe('when content is empty', () => {
+      it('returns empty content', () => {
+        expect(mapToContent('')).toEqual([{
+          type: 'text/plain',
+          value: ''
+        }]);
       });
     });
 
