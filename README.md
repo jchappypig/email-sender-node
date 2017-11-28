@@ -3,7 +3,7 @@ A backend service that accepts necessary information and send emails
 
 ## Running env
 - Node 8.9.0
-- Please setup your SendGrid API key as `SENDGRID_API_KEY` in `.env` file
+- Please setup your SendGrid API key as `SENDGRID_API_KEY` and Mailgun API key as `MAILGUN_API_KEY` in `.env` file
 ## How to run the service
 To start this service, you can just run
 
@@ -39,7 +39,7 @@ I have created this app using express generator to begin with.
 ```
 providers
   sendgrid.js       # Massage user input to match sendgrid format; send email through sendgrid API.
-  mailgun.js        # TODO: Massage user input to match mailgun format; send email through mailgun API.
+  mailgun.js        # Massage user input to match mailgun format; send email through mailgun API.
 services
   emailService.js   # Use sendgrid provider to send email. In case of failure, fallback to mailgun provider.
 routes
@@ -48,8 +48,8 @@ routes
 
 __test__            # Unit tests
   providers
-      sendgrid.js   
-      mailgun.js    # TODO
+    sendgrid.js   
+    mailgun.js
   services
     emailService.js
   routes
@@ -58,11 +58,6 @@ __test__            # Unit tests
 
 
 ```
-
-## TO DO
-
-- Integrate with mailgun api
-- Rails version
 
 
 Feedback is always welcome 🤗

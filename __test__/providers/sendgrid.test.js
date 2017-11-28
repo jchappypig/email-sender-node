@@ -5,8 +5,16 @@ describe('sendgrid', () => {
   describe('mapToEmails', () => {
     const { mapToEmails } = sendgrid;
 
+    it('returns undefined if input is empty', () => {
+      expect(mapToEmails('')).toBeUndefined();
+    });
+
+    it('returns undefined if input is empty spaces', () => {
+      expect(mapToEmails('  ')).toBeUndefined();
+    });
+
     it('returns undefined if input is undefined', () => {
-      expect(mapToEmails()).toEqual(undefined);
+      expect(mapToEmails()).toBeUndefined();
     });
 
     it('maps email string value to personalization objects', () => {
@@ -79,6 +87,49 @@ describe('sendgrid', () => {
     });
   });
 
+  describe('mapToFrom', () => {
+    const { mapToFrom } = sendgrid;
+
+    describe('when from is empty', () => {
+      it('returns undefined', () => {
+        expect(mapToFrom('')).toBeUndefined();
+      });
+    });
+
+    describe('when from is empty spaces', () => {
+      it('returns undefined', () => {
+        expect(mapToFrom('  ')).toBeUndefined();
+      });
+    });
+
+    describe('when from is valid', () => {
+      it('maps to email', () => {
+        expect(mapToFrom('jchappypig@email.com')).toEqual({
+          email: 'jchappypig@email.com'
+        });
+      });
+    });
+  });
+
+  describe('mapToContent', () => {
+    const { mapToContent } = sendgrid;
+
+    describe('when content is empty', () => {
+      it('returns undefined', () => {
+        expect(mapToContent('')).toBeUndefined();
+      });
+    });
+
+    describe('when content is empty spaces', () => {
+      it('returns content', () => {
+        expect(mapToContent(' ')).toEqual([{
+          type: 'text/plain',
+          value: ' '
+        }]);
+      });
+    });
+  });
+
   describe('send', () => {
     it('posts to sendgrid API', () => {
       const postFnMock = jest.fn().mockReturnValue({ status: 202, data: {} });
@@ -147,10 +198,7 @@ describe('sendgrid', () => {
         }],
         from: undefined,
         subject: undefined,
-        content: [{
-          type: 'text/plain',
-          value: undefined
-        }]
+        content: undefined
       });
     });
 

@@ -4,7 +4,7 @@ const sendgridApiKey = `${process.env.SENDGRID_API_KEY}`;
 const emailWithNameRegex = /(.+)?<(.+)>$/;
 
 const mapToEmails = (input) => {
-  if (!input) return input;
+  if (!input || !input.trim().length) return;
 
   const emails = input
     .split(',')
@@ -15,10 +15,18 @@ const mapToEmails = (input) => {
   return emails;
 }
 
-const mapToContent = (input) => ({
-  type: 'text/plain',
-  value: input
-})
+const mapToContent = (input) => {
+  if (!input || !input.length) return;
+  return [{
+    type: 'text/plain',
+    value: input
+  }]
+};
+
+const mapToFrom = (input) => {
+  const emails = mapToEmails(input)
+  return emails && emails[0];
+};
 
 const extractEmail = (input) => {
   let email = input;
@@ -45,9 +53,9 @@ const send = async (from, to, cc, bcc, subject, content) => {
 
   const data = {
     personalizations,
-    from: from && mapToEmails(from)[0],
+    from: mapToFrom(from),
     subject,
-    content: [mapToContent(content)]
+    content: mapToContent(content)
   }
 
   const axiosConfig = {
@@ -69,6 +77,8 @@ const send = async (from, to, cc, bcc, subject, content) => {
 module.exports = {
   send,
   mapToEmails,
+  mapToFrom,
+  mapToContent,
   apiUrl,
   sendgridApiKey
 };
